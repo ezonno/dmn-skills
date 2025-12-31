@@ -24,16 +24,20 @@ java -version
 curl -Ls https://sh.jbang.dev | bash -s - app setup
 
 # 3. Test installation (first run ~30s for deps, then ~2s)
-jbang DmnExecutor.java help
+jbang scripts/DmnExecutor.java help
+
+# 4. Test with example (greeting.dmn in assets/)
+jbang scripts/DmnExecutor.java execute assets/greeting.dmn '{"Name": "Claude", "Hour": 14}'
+# Expected: {"success": true, "results": {"Greeting": "Good afternoon, Claude"}}
 ```
 
 ## Workflow
 
 ```
 1. LOCATE → Find the .dmn file
-2. INSPECT → jbang DmnExecutor.java info <dmn-file>
+2. INSPECT → jbang scripts/DmnExecutor.java info <dmn-file>
 3. PREPARE → Build JSON with exact input names and correct types
-4. EXECUTE → jbang DmnExecutor.java execute <dmn-file> '<json>'
+4. EXECUTE → jbang scripts/DmnExecutor.java execute <dmn-file> '<json>'
 5. REPORT → Extract results and present in human-readable format
 ```
 
@@ -42,7 +46,7 @@ jbang DmnExecutor.java help
 ### info - Inspect a Model
 
 ```bash
-jbang DmnExecutor.java info <dmn-file>
+jbang scripts/DmnExecutor.java info <dmn-file>
 ```
 
 Shows required inputs (name/type), available decisions, and decision services.
@@ -50,7 +54,7 @@ Shows required inputs (name/type), available decisions, and decision services.
 ### execute - Run a Model
 
 ```bash
-jbang DmnExecutor.java execute <dmn-file> '<json-input>'
+jbang scripts/DmnExecutor.java execute <dmn-file> '<json-input>'
 ```
 
 **Options:**
@@ -63,7 +67,7 @@ jbang DmnExecutor.java execute <dmn-file> '<json-input>'
 ### help - Show Help
 
 ```bash
-jbang DmnExecutor.java help
+jbang scripts/DmnExecutor.java help
 ```
 
 ## Input Format
@@ -135,39 +139,21 @@ Input names are **case-sensitive**. Match exactly as shown in `info` output.
 
 ```bash
 # 1. Inspect
-jbang DmnExecutor.java info loan-approval.dmn
+jbang scripts/DmnExecutor.java info loan-approval.dmn
 
 # 2. Execute
-jbang DmnExecutor.java execute loan-approval.dmn \
+jbang scripts/DmnExecutor.java execute loan-approval.dmn \
   '{"Age": 35, "Income": 75000, "Loan Amount": 200000, "Credit Score": 720}'
 
 # 3. Output
 # {"success": true, "results": {"Risk Category": "Medium", "Loan Approval": "Manual Review"}}
 ```
 
-## Technical Details
+## Advanced Topics
 
-- **Engine:** Apache KIE 10.1.0 (Kogito/Drools)
-- **DMN Version:** 1.5 (backward compatible with 1.1-1.4)
-- **Expression Language:** FEEL 1.5
-
-For detailed architecture diagrams and KIE API documentation, see [references/ARCHITECTURE.md](references/ARCHITECTURE.md).
-
-## Creating Domain-Specific Skills
-
-Create skills that bundle a specific DMN model with simplified documentation:
-
-```
-your-domain-skill/
-├── SKILL.md      # Domain-specific docs
-├── model.dmn     # Your DMN file
-└── wrapper.sh    # Optional helper
-```
-
-Reference this executor from your domain skill:
-
-```bash
-DMN_EXECUTOR="/mnt/skills/dmn-executor/DmnExecutor.java"
-MODEL="/mnt/skills/your-skill/model.dmn"
-jbang $DMN_EXECUTOR execute $MODEL '{"Input1": value}'
-```
+**See [references/ARCHITECTURE.md](references/ARCHITECTURE.md) for:**
+- FEEL expression errors and syntax → [FEEL Engine](references/ARCHITECTURE.md#feel-engine)
+- Decision Services usage → [Decision Services](references/ARCHITECTURE.md#decision-services)
+- Performance tuning and threading → [Threading and Performance](references/ARCHITECTURE.md#threading-and-performance)
+- API integration details → [Key KIE API Classes](references/ARCHITECTURE.md#key-kie-api-classes)
+- Error type reference → [Error Handling](references/ARCHITECTURE.md#error-handling)

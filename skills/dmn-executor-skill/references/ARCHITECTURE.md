@@ -21,6 +21,11 @@ Technical architecture of the DMN Executor skill and Apache KIE DMN engine integ
 
 The DMN Executor is a lightweight CLI wrapper around the Apache KIE DMN runtime providing JSON-in/JSON-out interface for executing DMN decision models.
 
+**Technical Specifications:**
+- **Engine:** Apache KIE 10.1.0 (Kogito/Drools)
+- **DMN Version:** 1.5 (backward compatible with 1.1-1.4)
+- **Expression Language:** FEEL 1.5
+
 ```
 ┌─────────────────────────────────────┐
 │         DMN Executor                │
