@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20230324/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20230324/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" xmlns:feel="https://www.omg.org/spec/DMN/20230324/FEEL/" id="GreetingModel" name="Greeting" namespace="https://github.com/kiegroup/drools/greeting">
+  <decision id="d_Greeting" name="Greeting">
+    <variable id="_greeting_var" name="Greeting" typeRef="string"/>
+    <informationRequirement id="_req_name">
+      <requiredInput href="#i_Name"/>
+    </informationRequirement>
+    <informationRequirement id="_req_hour">
+      <requiredInput href="#i_Hour"/>
+    </informationRequirement>
+    <literalExpression id="_greeting_expr">
+      <text>if Hour &lt; 12 then "Good morning, " + Name else if Hour &lt; 18 then "Good afternoon, " + Name else "Good evening, " + Name</text>
+    </literalExpression>
+  </decision>
+  <inputData id="i_Name" name="Name">
+    <variable id="_name_var" name="Name" typeRef="string"/>
+  </inputData>
+  <inputData id="i_Hour" name="Hour">
+    <variable id="_hour_var" name="Hour" typeRef="number"/>
+  </inputData>
+</definitions>
