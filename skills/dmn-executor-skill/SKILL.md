@@ -63,6 +63,7 @@ jbang scripts/DmnExecutor.java execute <dmn-file> '<json-input>'
 - `-m, --model <name>` — Select model by name
 - `-i, --import <path>` — Add DMN file or directory
 - `--no-auto-import` — Don't auto-load .dmn files from same directory
+- `--no-typecheck` — Disable DMN runtime input type checking (more permissive)
 
 ### help - Show Help
 

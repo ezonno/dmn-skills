@@ -61,7 +61,7 @@ public class DmnExecutor {
             new TypeReference<Map<String, Object>>() {}
         );
 
-        DMNRuntime runtime = createRuntime(parsed.mainDmnFile, parsed.importPaths, parsed.autoImport);
+        DMNRuntime runtime = createRuntime(parsed.mainDmnFile, parsed.importPaths, parsed.autoImport, parsed.runtimeTypeCheck);
         DMNModel model = findMainModel(runtime, parsed.mainDmnFile, parsed.modelName);
 
         if (model == null) {
@@ -108,7 +108,7 @@ public class DmnExecutor {
             new TypeReference<Map<String, Object>>() {}
         );
 
-        DMNRuntime runtime = createRuntime(parsed.mainDmnFile, parsed.importPaths, parsed.autoImport);
+        DMNRuntime runtime = createRuntime(parsed.mainDmnFile, parsed.importPaths, parsed.autoImport, parsed.runtimeTypeCheck);
         DMNModel model = findMainModel(runtime, parsed.mainDmnFile, parsed.modelName);
 
         if (model == null) {
@@ -233,7 +233,7 @@ public class DmnExecutor {
             System.exit(1);
         }
 
-        DMNRuntime runtime = createRuntime(parsed.mainDmnFile, parsed.importPaths, parsed.autoImport);
+        DMNRuntime runtime = createRuntime(parsed.mainDmnFile, parsed.importPaths, parsed.autoImport, parsed.runtimeTypeCheck);
 
         Map<String, Object> output = new LinkedHashMap<>();
         
@@ -378,7 +378,12 @@ public class DmnExecutor {
         return runtime.getModels().isEmpty() ? null : runtime.getModels().get(0);
     }
 
-    private static DMNRuntime createRuntime(String mainDmnFile, List<String> importPaths, boolean autoImport) throws Exception {
+    private static DMNRuntime createRuntime(String mainDmnFile, List<String> importPaths, boolean autoImport, boolean runtimeTypeCheck) throws Exception {
+        // KIE DMN runtime input type checking (enabled by default).
+        // If disabled, the engine will be more permissive with input values.
+        if (!runtimeTypeCheck) {
+            System.setProperty("org.kie.dmn.runtime.typecheck", "false");
+        }
         Path mainPath = Path.of(mainDmnFile);
         if (!Files.exists(mainPath)) {
             throw new FileNotFoundException("DMN file not found: " + mainDmnFile);
@@ -434,6 +439,7 @@ public class DmnExecutor {
         String modelName;
         List<String> importPaths = new ArrayList<>();
         boolean autoImport = true;
+        boolean runtimeTypeCheck = true;
     }
 
     private static ParsedArgs parseArgs(String[] args) throws IOException {
@@ -449,6 +455,8 @@ public class DmnExecutor {
                 }
             } else if (arg.equals("--no-auto-import")) {
                 parsed.autoImport = false;
+            } else if (arg.equals("--no-typecheck")) {
+                parsed.runtimeTypeCheck = false;
             } else if (arg.equals("--model") || arg.equals("-m")) {
                 if (i + 1 < args.length) {
                     parsed.modelName = args[++i];
@@ -506,6 +514,7 @@ public class DmnExecutor {
               -m, --model <name>     Select model by name (when multiple loaded)
               -i, --import <path>    Add DMN file or directory to import
               --no-auto-import       Disable auto-importing from same directory
+              --no-typecheck         Disable DMN runtime input type checking
             
             Decision Services:
               Decision Services encapsulate a subset of decisions, exposing only
